@@ -45,7 +45,8 @@
     <a href="load-wifi.jsp">Open API 와이파이 정보 가져오기</a> |
     <a href="bookmark-list.jsp">북마크 보기</a> |
     <a href="bookmark-group.jsp">북마크 그룹 관리</a><br></br>
- <form action="bookmark-group-edit-submit.jsp" style="margin-top: 20px;">
+ <form action="bookmark-group-edit-submit.jsp?id=<%= id %>" style="margin-top: 20px;">
+     <input type="hidden" name="id" value="<%= id %>">
         <table>
             <tr>
                 <th>북마크 이름</th>

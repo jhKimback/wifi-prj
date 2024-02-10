@@ -9,10 +9,15 @@ import java.util.List;
 public class BookMarkGroupService {
     public static void main (String[] args){
         BookMarkGroupService bs = new BookMarkGroupService();
-        System.out.println(bs.showOneBookMarkGroup(1).getGroup_name());
+        dto.BookMarkGroup bookmarkGroup = new dto.BookMarkGroup();
+//        bookmarkGroup.setId(6);
+//        bookmarkGroup.setModify_dttm("2023-01-01");
+//        bookmarkGroup.setGroup_name("알고");
+//        bookmarkGroup.setOrder_no(3);
+//        bs.editBookMarkGroup(bookmarkGroup);
     }
     public int addBookMarkGroup(BookMarkGroup bookMarkGroup) {
-        String url = "jdbc:mariadb://localhost:3306/wifi";
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
         String dbUserId = "testuser";
         String dbPassword = "1111";
 
@@ -74,7 +79,7 @@ public class BookMarkGroupService {
     }
     public List<BookMarkGroup> showBookMarkGroup() {
         List<BookMarkGroup> bookmarkGroupList = new ArrayList<>();
-        String url = "jdbc:mariadb://localhost:3306/wifi";
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
         String dbUserId = "testuser";
         String dbPassword = "1111";
 
@@ -144,7 +149,7 @@ public class BookMarkGroupService {
     }
     public BookMarkGroup showOneBookMarkGroup(Integer id) {
         BookMarkGroup bookmarkGroup = new BookMarkGroup();
-        String url = "jdbc:mariadb://localhost:3306/wifi";
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
         String dbUserId = "testuser";
         String dbPassword = "1111";
 
@@ -205,5 +210,126 @@ public class BookMarkGroupService {
             }
         }
         return bookmarkGroup;
+    }
+
+    public int deleteBookMarkGroup(BookMarkGroup bookMarkGroup) {
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
+        String dbUserId = "testuser";
+        String dbPassword = "1111";
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        int affected = 0;
+
+        try {
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+
+            String sql = " delete from bookmark_group where group_name = ? and order_no = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,  bookMarkGroup.getGroup_name());
+            preparedStatement.setInt(2,  bookMarkGroup.getOrder_no());
+            affected = preparedStatement.executeUpdate();
+
+            if (affected > 0){
+                System.out.println("북마크 그룹 데이터 추가 완료");
+            } else {
+                System.out.println("북마크 그룹 데이터 추가 실패");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (rs != null && rs.isClosed()) {
+                    rs.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (preparedStatement != null && preparedStatement.isClosed()) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (connection != null && connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return affected;
+    }
+    public int editBookMarkGroup(BookMarkGroup bookMarkGroup) {
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
+        String dbUserId = "testuser";
+        String dbPassword = "1111";
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        int affected = 0;
+
+        try {
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+
+            String sql = " update bookmark_group set group_name = ?, order_no = ?, modify_dttm = ? where id = ? ";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, bookMarkGroup.getGroup_name());
+            preparedStatement.setInt(2,  bookMarkGroup.getOrder_no());
+            preparedStatement.setString(3,  bookMarkGroup.getModify_dttm());
+            preparedStatement.setInt(4,  bookMarkGroup.getId());
+            affected = preparedStatement.executeUpdate();
+
+            if (affected > 0){
+                System.out.println("북마크 그룹 데이터 수정 완료");
+            } else {
+                System.out.println("북마크 그룹 데이터 수정 실패");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (rs != null && rs.isClosed()) {
+                    rs.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (preparedStatement != null && preparedStatement.isClosed()) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (connection != null && connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return affected;
     }
 }

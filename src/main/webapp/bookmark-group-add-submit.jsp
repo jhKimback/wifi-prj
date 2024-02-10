@@ -39,12 +39,12 @@
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             BookMarkGroupService bookMarkGroupService = new BookMarkGroupService();
 
-            BookMarkGroup bookMarkGroup = new BookMarkGroup();
-            bookMarkGroup.setGroup_name(name);
-            bookMarkGroup.setOrder_no(orderNumber);
-            bookMarkGroup.setRegister_dttm(timestamp.toString());
+            dto.BookMarkGroup bookmarkGroup = new dto.BookMarkGroup(); // 변수명 수정
+            bookmarkGroup.setGroup_name(name);
+            bookmarkGroup.setOrder_no(orderNumber);
+            bookmarkGroup.setRegister_dttm(timestamp.toString());
 
-            affected = bookMarkGroupService.addBookMarkGroup(bookMarkGroup);
+            affected = bookMarkGroupService.addBookMarkGroup(bookmarkGroup);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

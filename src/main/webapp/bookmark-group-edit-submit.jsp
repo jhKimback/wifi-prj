@@ -29,33 +29,39 @@
 <body>
 <%
     request.setCharacterEncoding("UTF-8");
-
-    String name = request.getParameter("name");
-    String orderNo = request.getParameter("order_no");
     int affected = 0;
 
-        try {
-            int orderNumber = Integer.parseInt(orderNo);
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            BookMarkGroupService bookMarkGroupService = new BookMarkGroupService();
+    try {
+        String id = request.getParameter("id");
+        String name = request.getParameter("name");
+        String orderNo = request.getParameter("order_no");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-            BookMarkGroup bookMarkGroup = new BookMarkGroup();
-            bookMarkGroup.setGroup_name(name);
-            bookMarkGroup.setOrder_no(orderNumber);
-            bookMarkGroup.setRegister_dttm(timestamp.toString());
+        int idInteger = Integer.parseInt(id);
+        int orderNumber = Integer.parseInt(orderNo);
 
-            affected = bookMarkGroupService.addBookMarkGroup(bookMarkGroup);
+        dto.BookMarkGroup bookmarkGroup = new dto.BookMarkGroup();
+        bookmarkGroup.setId(idInteger);
+        bookmarkGroup.setGroup_name(name);
+        bookmarkGroup.setOrder_no(orderNumber);
+        bookmarkGroup.setModify_dttm(timestamp.toString());
 
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
+        BookMarkGroupService bookmarkGroupService = new BookMarkGroupService();
+        affected = bookmarkGroupService.editBookMarkGroup(bookmarkGroup); // 수정 필요
+
+    } catch (NumberFormatException e) {
+        e.printStackTrace();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 %>
+
 <script>
     <%
-        String text = affected > 0 ? "북마크 그룹 데이터를 추가하였습니다." : "북마크 그룹 데이터를 추가하지 못했습니다.";
+        String text = affected > 0 ? "북마크 그룹 데이터를 수정하였습니다." : "데이터 수정에 실패하였습니다.";
     %>
     alert("<%= text %>");
-    location.href = "bookmark-group.jsp";
+    window.location.href = "bookmark-group.jsp";
 </script>
 </body>
 </html>

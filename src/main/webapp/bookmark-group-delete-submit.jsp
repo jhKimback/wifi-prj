@@ -1,6 +1,6 @@
 <%@ page import="Service.BookMarkGroupService" %>
 <%@ page import="dto.BookMarkGroup" %>
-<%@ page import="java.sql.Timestamp" %>
+<%@ page import="java.sql.SQLException" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -36,15 +36,13 @@
 
         try {
             int orderNumber = Integer.parseInt(orderNo);
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             BookMarkGroupService bookMarkGroupService = new BookMarkGroupService();
 
             BookMarkGroup bookMarkGroup = new BookMarkGroup();
             bookMarkGroup.setGroup_name(name);
             bookMarkGroup.setOrder_no(orderNumber);
-            bookMarkGroup.setRegister_dttm(timestamp.toString());
 
-            affected = bookMarkGroupService.addBookMarkGroup(bookMarkGroup);
+            affected = bookMarkGroupService.deleteBookMarkGroup(bookMarkGroup);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -52,7 +50,7 @@
 %>
 <script>
     <%
-        String text = affected > 0 ? "북마크 그룹 데이터를 추가하였습니다." : "북마크 그룹 데이터를 추가하지 못했습니다.";
+        String text = affected > 0 ? "북마크 그룹 데이터를 삭제하였습니다." : "삭제할 북마크 그룹 데이터가 없습니다.";
     %>
     alert("<%= text %>");
     location.href = "bookmark-group.jsp";

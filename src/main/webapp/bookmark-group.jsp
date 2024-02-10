@@ -36,6 +36,7 @@
     <form action="bookmark-group-add.jsp">
         <input type="submit" value="북마크 그룹 이름 추가">
     </form>
+
     <%
         BookMarkGroupService bookmarkGroupService = new BookMarkGroupService();
         List<BookMarkGroup> bookmarkGroupList = bookmarkGroupService.showBookMarkGroup();
