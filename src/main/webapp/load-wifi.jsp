@@ -14,7 +14,19 @@
     </style>
 </head>
 <body>
-    <h1>14497개의 Wifi 정보를 정상적으로 저장하였습니다.</h1>
-    <a href="index.jsp">홈으로 가기</a>
+    <%
+        int count = 2;
+    %>
+    <div>
+        <% if (count > 0) {%>
+            <div style="text-align: center;">
+                <h1><%=count%>건의 데이터를 성공적으로 저장했습니다.</h1>
+                <a href="index.jsp">홈으로 돌아가기</a>
+            </div>
+        <% } else { %>
+            <h1>데이터 저장 실패</h1>
+        <% } %>
+    </div>
+
 </body>
 </html>
