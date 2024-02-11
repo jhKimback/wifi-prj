@@ -4,6 +4,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="dto.Wifi" %>
 <%@ page import="dto.History" %>
+<%@ page import="java.sql.Timestamp" %>
 
 <html>
 <head>
@@ -77,9 +78,19 @@
             <tbody>
                 <%
                     if (!("0.0").equals(lat) && !("0.0").equals(lnt)) {
+                        int affected = 0;
+                        HistoryService historyService = new HistoryService();
+                        History history = new History();
+
+                        history.setLat(lat);
+                        history.setLnt(lnt);
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        history.setSearch_dttm(timestamp.toString());
+
+                        affected = historyService.addHistory(history);
+
                         WifiService wifiService = new WifiService();
                         List<Wifi> list = wifiService.showNearWifi(lat, lnt);
-
                         if (list != null) {
                             for (Wifi wifi : list) {
                 %>
@@ -87,7 +98,7 @@
                         <td><%=wifi.getDistance()%></td>
                         <td><%= wifi.getX_swifi_mgr_no() != null ? wifi.getX_swifi_mgr_no() : "" %></td>
                         <td><%= wifi.getX_swifi_wrdofc() != null ? wifi.getX_swifi_wrdofc() : "" %></td>
-                        <td><a href="detail-wifi.jsp?mgrNo=<%= wifi.getX_swifi_mgr_no() %>&"><%= wifi.getX_swifi_main_nm() %></a></td>
+                        <td><a href="detail.jsp?mgr_no=<%= wifi.getX_swifi_mgr_no() %>&"><%= wifi.getX_swifi_main_nm() %></a></td>
                         <td><%= wifi.getX_swifi_adres1() != null ? wifi.getX_swifi_adres1() : "" %></td>
                         <td><%= wifi.getX_swifi_adres2() != null ? wifi.getX_swifi_adres2() : "" %></td>
                         <td><%= wifi.getX_swifi_instl_floor() != null ? wifi.getX_swifi_instl_floor() : "" %></td>
@@ -129,7 +140,7 @@
                     let latitude = position.coords.latitude;
                     let longitude = position.coords.longitude;
                     document.getElementById("lat").value = latitude;
-                    document.getElementById("lnt").value = longitude; // 여기서 latitude가 아닌 longitude로 수정
+                    document.getElementById("lnt").value = longitude;
                 })
             }
         });
@@ -139,7 +150,7 @@
             let longitude = document.getElementById("lnt").value;
 
             if (latitude !== "" && longitude !== "") {
-                window.location.assign("http://localhost:8080/wifi/index.jsp?lat=" + latitude + "&lnt=" + longitude);
+                window.location.assign("index.jsp?lat=" + latitude + "&lnt=" + longitude);
             } else {
                 alert("위치 정보를 입력한 후에 조회해주세요.")
             }

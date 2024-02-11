@@ -1,4 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="Service.HistoryService" %>
+<%@ page import="java.util.*" %>
+<%@ page import="dto.History" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +21,9 @@
         }
         th {
             background-color: #3cb371;
+        }
+        .formsub {
+            text-align: center;
         }
 
     </style>
@@ -41,8 +47,27 @@
             </tr>
         </thead>
         <tbody>
+            <%
+                HistoryService historyService = new HistoryService();
+                List<History> list = historyService.showHistory();
+                if (!list.isEmpty()) {
+                    for (History history : list) {
+            %>
             <tr>
+            <form action="history-delete-submit.jsp" style="margin-top: 20px;">
+                <td> <%=history.getId() %> </td>
+                <td> <%=history.getLat() %> </td>
+                <td> <%=history.getLnt() %> </td>
+                <td> <%=history.getSearch_dttm() %> </td>
+                    <td class="formsub" colspan="2">
+                        <input type="hidden" name="id" value="<%= history.getId() %>">
+                        <input type="submit" value="삭제">
+                    </td>
+            </form>
+            <% } %>
+            <% } else { %>
                 <td colspan= "5">이전 히스토리가 없습니다.</td>
+            <% } %>
             </tr>
         </tbody>
     </table>
