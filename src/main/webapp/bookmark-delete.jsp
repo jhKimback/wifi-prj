@@ -7,24 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <title>와이파이 정보 구하기</title>
-    <style>
-       body {
-            font-family: 'Arial', sans-serif;
-       }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border:solid 1px #000;
-            padding: 8px;
-        }
-        th {
-            background-color: #3cb371;
-            text-align: center;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <%
@@ -58,8 +41,8 @@
                 <th>등록일자</th>
                 <td><%= bookmark.getRegister_dttm() != null ? bookmark.getRegister_dttm() : "" %></td>
             </tr>
-                <td colspan="2" class="formsub">
-                    <div style="text-align:center;">
+                <td colspan="2">
+                    <div class="formsub">
                         <a href="bookmark-list.jsp">돌아가기</a> |
                         <input type="submit" value="삭제">
                     </div>

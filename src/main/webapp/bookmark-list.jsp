@@ -8,23 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <title>와이파이 정보 구하기</title>
-    <style>
-       body {
-            font-family: 'Arial', sans-serif;
-       }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border:solid 1px #000;
-            padding: 8px;
-        }
-        th {
-            background-color: #3cb371;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     <h1>북마크 목록</h1>
@@ -55,7 +39,7 @@
             <td ><a href="detail.jsp?mgr_no=<%= bookmark.getX_swifi_mgr_no() %>&"><%= bookmark.getX_swifi_main_nm() %></a></td>
             <td><%=bookmark.getRegister_dttm()%></td>
             <td>
-                <div style="text-align:center;">
+                <div class="formsub">
                     <a href="bookmark-delete.jsp?id=<%=bookmark.getId()%>">삭제</a>
                 </div>
             </td>

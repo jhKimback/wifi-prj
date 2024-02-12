@@ -8,23 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <title>와이파이 정보 구하기</title>
-    <style>
-       body {
-            font-family: 'Arial', sans-serif;
-       }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border:solid 1px #000;
-            padding: 8px;
-        }
-        th {
-            background-color: #3cb371;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     <h1>북마크 그룹</h1>
@@ -66,9 +50,11 @@
                         <td> <%=bookmarkGroup.getOrder_no() %> </td>
                         <td><%=bookmarkGroup.getRegister_dttm() != null ? bookmarkGroup.getRegister_dttm() : "" %></td>
                         <td> <%=bookmarkGroup.getModify_dttm() != null ? bookmarkGroup.getModify_dttm() : "" %> </td>
-                        <td style="text-align: center">
-                            <a href="bookmark-group-edit.jsp?id=<%=bookmarkGroup.getId()%>">수정</a> |
-                            <a href="bookmark-group-delete.jsp?id=<%=bookmarkGroup.getId()%>">삭제</a>
+                        <td>
+                            <div class="formsub">
+                                <a href="bookmark-group-edit.jsp?id=<%=bookmarkGroup.getId()%>">수정</a> |
+                                <a href="bookmark-group-delete.jsp?id=<%=bookmarkGroup.getId()%>">삭제</a>
+                            </div>
                         </td>
                     </tr>
                 <% }

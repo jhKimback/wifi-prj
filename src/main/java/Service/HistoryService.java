@@ -100,13 +100,12 @@ public class HistoryService {
             preparedStatement.setString(1, history.getLat());
             preparedStatement.setString(2, history.getLnt());
             preparedStatement.setString(3, history.getSearch_dttm());
-            preparedStatement.executeUpdate();
             affected = preparedStatement.executeUpdate();
 
             if (affected > 0){
-                System.out.println("북마크 그룹 데이터 추가 완료");
+                System.out.println("히스토리 추가 완료");
             } else {
-                System.out.println("북마크 그룹 데이터 추가 실패");
+                System.out.println("히스토리 추가 실패");
             }
 
         } catch (SQLException e) {

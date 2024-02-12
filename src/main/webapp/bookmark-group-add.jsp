@@ -4,27 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>와이파이 정보 구하기</title>
-    <style>
-       body {
-            font-family: 'Arial', sans-serif;
-       }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border:solid 1px #000;
-            padding: 8px;
-        }
-        th {
-            background-color: #3cb371;
-            text-align: center;
-        }
-        .formsub {
-            text-align: center;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     <h1>북마크 그룹</h1>
@@ -44,8 +24,10 @@
                 <td><input type="text" name="order_no"></td>
             </tr>
             <tr>
-                <td class="formsub" colspan="2">
-                    <input type="submit" value="추가">
+                <td colspan="2">
+                    <div class="formsub">
+                        <input type="submit" value="추가"></input>
+                    </div>
                 </td>
             </tr>
         </table>

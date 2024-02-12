@@ -1,13 +1,197 @@
 package Service;
 
-import dto.BookMarkGroup;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dto.Wifi;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
+import java.io.IOException;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WifiService {
+
+    private static final String API_KEY = "65514f686f726c613637544b494554";
+    private static String API_URL = "http://openapi.seoul.go.kr:8088/" + API_KEY + "/json/TbPublicWifiInfo/";
+    private static OkHttpClient okHttpClient = new OkHttpClient();
+    public static int WifiTotalCount() throws IOException{
+        int cnt = 0;
+
+        URL url = new URL(API_URL + "1/1");
+
+        Request.Builder builder = new Request.Builder().url(url).get();
+        Request request = builder.build();
+        Response response = okHttpClient.newCall(request).execute();
+
+        try {
+            if (response.isSuccessful()) {
+                ResponseBody body = response.body();
+
+                if (body != null) {
+                    JsonElement jsonElement = JsonParser.parseString(body.string());
+
+                    cnt = jsonElement.getAsJsonObject().get("TbPublicWifiInfo")
+                            .getAsJsonObject().get("list_total_count")
+                            .getAsInt();
+                }
+
+            } else {
+                System.out.println(response.code());
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cnt;
+    }
+    public static int getWifiJson() throws IOException {
+        int totalCnt = WifiTotalCount();
+        int start = 1, end = 1;
+        int count = 0;
+
+        try {
+            for (int i = 0; i <= totalCnt / 1000; i++) {
+                start = 1 + (1000 * i);
+                end = 1000 + (1000 * i);
+
+                URL url = new URL(API_URL + start + "/" + end);
+
+                Request.Builder builder = new Request.Builder().url(url).get();
+                Request request = builder.build();
+                Response response = okHttpClient.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    ResponseBody responseBody = response.body();
+
+                    if (responseBody != null) {
+                        JsonElement jsonElement = JsonParser.parseString(responseBody.string());
+
+                        JsonArray jsonArray = jsonElement.getAsJsonObject().get("TbPublicWifiInfo")
+                                .getAsJsonObject().get("row")
+                                .getAsJsonArray();
+
+                        count += insertTotalWifi(jsonArray);
+
+                    } else {
+                        System.out.println(response.code());
+                    }
+                } else {
+                    System.out.println(response.code());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public static int insertTotalWifi(JsonArray jsonArray) {
+        List<Wifi> wifiList = new ArrayList<>();
+        String url = "jdbc:mariadb://localhost:3306/wifi?allowPublicKeyRetrieval=true&useSSL=false";
+        String dbUserId = "testuser";
+        String dbPassword = "1111";
+        int count = 0;
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        try {
+            connection = DriverManager.getConnection(url, dbUserId, dbPassword);
+            connection.setAutoCommit(false);
+
+            String sql = " insert into public_wifi "
+                    + " ( x_swifi_mgr_no, x_swifi_wrdofc, x_swifi_main_nm, x_swifi_adres1, x_swifi_adres2, "
+                    + " x_swifi_instl_floor, x_swifi_instl_ty, x_swifi_instl_mby, x_swifi_svc_se, x_swifi_cmcwr, "
+                    + " x_swifi_cnstc_year, x_swifi_inout_door, x_swifi_remars3, lat, lnt, work_dttm) "
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ";
+
+            preparedStatement = connection.prepareStatement(sql);
+
+            for (int i = 0; i < jsonArray.size(); i++) {
+
+                JsonObject data = (JsonObject) jsonArray.get(i).getAsJsonObject();
+
+                preparedStatement.setString(1, data.get("X_SWIFI_MGR_NO").getAsString());
+                preparedStatement.setString(2, data.get("X_SWIFI_WRDOFC").getAsString());
+                preparedStatement.setString(3, data.get("X_SWIFI_MAIN_NM").getAsString());
+                preparedStatement.setString(4, data.get("X_SWIFI_ADRES1").getAsString());
+                preparedStatement.setString(5, data.get("X_SWIFI_ADRES2").getAsString());
+                preparedStatement.setString(6, data.get("X_SWIFI_INSTL_FLOOR").getAsString());
+                preparedStatement.setString(7, data.get("X_SWIFI_INSTL_TY").getAsString());
+                preparedStatement.setString(8, data.get("X_SWIFI_INSTL_MBY").getAsString());
+                preparedStatement.setString(9, data.get("X_SWIFI_SVC_SE").getAsString());
+                preparedStatement.setString(10, data.get("X_SWIFI_CMCWR").getAsString());
+                preparedStatement.setString(11, data.get("X_SWIFI_CNSTC_YEAR").getAsString());
+                preparedStatement.setString(12, data.get("X_SWIFI_INOUT_DOOR").getAsString());
+                preparedStatement.setString(13, data.get("X_SWIFI_REMARS3").getAsString());
+                preparedStatement.setString(14, data.get("LAT").getAsString());
+                preparedStatement.setString(15, data.get("LNT").getAsString());
+                preparedStatement.setString(16, data.get("WORK_DTTM").getAsString());
+
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+
+                if ((i + 1) % 1000 == 0) {
+                    int[] result = preparedStatement.executeBatch();
+                    count += result.length;
+                    connection.commit();
+                }
+            }
+
+            int[] result = preparedStatement.executeBatch();
+            count += result.length;
+            connection.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            try {
+                connection.rollback();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (preparedStatement != null && !preparedStatement.isClosed()) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return count;
+    }
 
     public List<Wifi> showNearWifi(String lat, String lnt) {
         List<Wifi> wifiList = new ArrayList<>();
@@ -33,7 +217,7 @@ public class WifiService {
                     " AS distance " +
                     " FROM public_wifi " +
                     " ORDER BY distance " +
-                    " LIMIT 2;";
+                    " LIMIT 20;";
 
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDouble(1, Double.parseDouble(lat));

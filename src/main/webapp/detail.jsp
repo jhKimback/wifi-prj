@@ -9,26 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>와이파이 정보 구하기</title>
-    <style>
-       body {
-            font-family: 'Arial', sans-serif;
-       }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border:solid 1px #000;
-            padding: 8px;
-        }
-        th {
-            background-color: #3cb371;
-        }
-        .formsub {
-            text-align: center;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     <%
@@ -47,11 +28,12 @@
     <form action="bookmark-add-submit.jsp">
         <input type="hidden" name="mgr_no" value="<%=wifi.getX_swifi_mgr_no()%>">
         <select name="group_name" style="width: 150px;">
+        <option>북마크 그룹 이름 선택</option>
 
     <%
         BookMarkGroupService bookmarkGroupService = new BookMarkGroupService();
         List<BookMarkGroup> list = bookmarkGroupService.showBookMarkGroup();
-        if (list != null) {
+        if (!list.isEmpty()) {
             for (BookMarkGroup bookmarkGroup : list) {
     %>
         <option value="<%=bookmarkGroup.getGroup_name()%>"><%=bookmarkGroup.getGroup_name()%></option>
@@ -59,7 +41,7 @@
     <% } %>
     <% } %>
         </select>
-        <input type="submit" value="북마크 등록하기"></input>
+        <input type="submit" value="북마크 추가하기"></input>
     </form>
     <table>
             <tr>
